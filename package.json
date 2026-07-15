@@ -1,0 +1,60 @@
+{
+  "name": "pphlx",
+  "displayName": "PPHLX",
+  "description": "Rich editing experience for PPHLX templates, bringing syntax highlighting, component autocomplete, and language support.",
+  "version": "1.0.4",
+  "publisher": "pphlx",
+  "author": "PPHLX",
+  "license": "MIT",
+  "homepage": "https://pphlx.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pphlx/vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pphlx/vscode/issues"
+  },
+  "icon": "logo/logo.png",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "extensionDependencies": [
+    "vscode.php"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "php",
+    "pphlx",
+    "pphx",
+    "syntax",
+    "template"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "pphx",
+        "aliases": [
+          "PPHLX",
+          "pphx"
+        ],
+        "extensions": [
+          ".pphx"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./logo/file-icon.svg",
+          "dark": "./logo/file-icon.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "pphx",
+        "scopeName": "text.html.pphx",
+        "path": "./syntaxes/pphlx.tmLanguage.json"
+      }
+    ]
+  }
+}
