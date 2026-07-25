@@ -5,6 +5,28 @@ All notable changes to the PPHLX Visual Studio Code extension will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] - 2026-07-25
+
+### Fixed
+- **CDN Raw WebP Banner Asset**: Switched README banner image to raw GitHub HTTPS CDN URL (`https://raw.githubusercontent.com/pphlx/vscode/main/.github/assets/banner.webp`) for seamless rendering across both local VS Code extension webviews and the Web Marketplace.
+
+---
+
+## [1.0.7] - 2026-07-25
+
+### Fixed
+- **Extension Marketplace Banner**: Updated README banner asset path (`logo/banner.webp`) to ensure proper rendering on VS Code Extension Marketplace.
+
+---
+
+## [1.0.6] - 2026-07-25
+
+### Added
+- **`Ctrl+Click` Component Navigation ("Go to Definition")**: Instant jump to target `.pphx` component files when holding `Ctrl` and clicking on `<Navbar />`, `<Hero />`, `<Footer />`, or `<Layout />` tags.
+- **Clickable Hyperlinks for `@import`**: Added `DocumentLinkProvider` for `@import Component from './components/Component.pphx'` relative file paths.
+
+---
+
 ## [1.0.5] - 2026-07-17
 
 ### Changed

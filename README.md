@@ -1,8 +1,16 @@
 # PPHLX Language Service (VS Code Extension)
 
-> Rich editing experience for PPHLX templates, bringing syntax highlighting, brackets closing, and language support.
+<br/>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/pphlx/vscode/main/.github/assets/banner.webp" alt="Bring Your Own UI Framework">
+  <br/><br/>
+  <a href="https://pphlx.org">PPHLX</a> is the high-performance monolithic compiler for modern PHP web applications.
+  <br/>
+  Build component-driven PHP apps with React, Vue, Svelte, or pure PHP templates — with zero Node.js runtime in production.
+  <br/><br/>
+</p>
 
-This is the official Visual Studio Code extension providing native language support and syntax configurations for **PPHLX (`.pphx`)** templates — the component-based standalone web compiler for PHP (similar to Astro for Node.js).
+Official Visual Studio Code extension for **PPHLX**. Provides native language support, syntax highlighting, bracket matching, and auto-completion for `.pphx` template files.
 
 ---
 
@@ -33,7 +41,7 @@ Download the `.vsix` file for the release that you want to install from the [Git
 
 The extension can also be installed with the following command line:
 ```bash
-code --install-extension /path/to/pphlx-1.0.4.vsix
+code --install-extension /path/to/pphlx-1.0.6.vsix
 ```
 
 ---
