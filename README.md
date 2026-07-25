@@ -27,6 +27,9 @@ This extension provides a rich editing experience for PPHLX templates, including
 *   **Brace-Pipe Auto-Close**: Type `{|` or `{|=` and the editor will automatically insert the matching closing delimiter ` |}` and center your cursor.
 *   **Workspace Integration**: Automatically maps any `.pphx` files in your workspace with the PPHLX language identifier and custom file icons.
 
+### 🛡️ `.pphlxignore` Build Exclusion Support
+*   **Git-Style Exclusion Rules**: Official PPHLX file icon tree branding and native `source.ignore` syntax highlighting for `.pphlxignore` build exclusion manifest files.
+
 ---
 
 ## Installation
@@ -41,7 +44,7 @@ Download the `.vsix` file for the release that you want to install from the [Git
 
 The extension can also be installed with the following command line:
 ```bash
-code --install-extension /path/to/pphlx-1.0.6.vsix
+code --install-extension /path/to/pphlx-x.x.x.vsix
 ```
 
 ---
