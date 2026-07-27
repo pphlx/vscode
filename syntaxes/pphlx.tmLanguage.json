@@ -1,20 +1,12 @@
 {
-  "information_for_contributors": [
-    "This file has been converted from https://github.com/KapitanOczywisty/language-php/blob/master/grammars/html.cson",
-    "If you want to provide a fix or improvement, please create a pull request against the original repository.",
-    "Once accepted there, we are happy to receive an update request."
-  ],
-  "version": "https://github.com/KapitanOczywisty/language-php/commit/ff64523c94c014d68f5dec189b05557649c5872a",
   "name": "PPHLX",
   "scopeName": "text.html.pphx",
   "injections": {
-    "L:meta.embedded.php.blade": {
+    "L:entity.name.tag.html, L:entity.name.tag": {
       "patterns": [
         {
-          "include": "text.html.basic"
-        },
-        {
-          "include": "text.html.php.blade#blade"
+          "match": "\\b([A-Z][A-Za-z0-9_.]*)\\b",
+          "name": "entity.name.type.class.component.pphx support.class.component.pphx"
         }
       ]
     },
@@ -28,15 +20,19 @@
   },
   "patterns": [
     {
-      "comment": "PPHLX import directives: @import Name from 'path'",
-      "match": "^\\s*(@import)\\s+([A-Z][a-zA-Z0-9_]*)\\s+(from)\\s+(['\"])([^'\"]+)\\4",
-      "captures": {
-        "1": { "name": "keyword.control.import.pphx" },
-        "2": { "name": "entity.name.class.pphx" },
-        "3": { "name": "keyword.control.from.pphx" },
-        "4": { "name": "string.quoted.single.pphx" },
-        "5": { "name": "string.quoted.single.pphx" }
-      }
+      "include": "#import-directive"
+    },
+    {
+      "include": "#island-directive"
+    },
+    {
+      "include": "#component-tag"
+    },
+    {
+      "include": "#slot-placeholder"
+    },
+    {
+      "include": "#php-tag"
     },
     {
       "begin": "\\A#!",
@@ -53,6 +49,64 @@
     }
   ],
   "repository": {
+    "import-directive": {
+      "patterns": [
+        {
+          "match": "(?m)^\\s*(@import)\\b(?:\\s+([A-Za-z0-9_]+))?(?:\\s+(from))?(?:\\s+(['\"])([^'\"]*)(['\"]))?",
+          "captures": {
+            "1": { "name": "keyword.control.import.pphx" },
+            "2": { "name": "entity.name.type.class.component.pphx support.class.component.pphx" },
+            "3": { "name": "keyword.control.from.pphx" },
+            "4": { "name": "string.quoted.pphx" },
+            "5": { "name": "string.quoted.path.pphx" },
+            "6": { "name": "string.quoted.pphx" }
+          }
+        }
+      ]
+    },
+    "island-directive": {
+      "patterns": [
+        {
+          "match": "\\b(client:(?:load|visible|idle|only))\\b",
+          "name": "keyword.control.directive.pphx entity.other.attribute-name.directive.pphx"
+        }
+      ]
+    },
+    "slot-placeholder": {
+      "patterns": [
+        {
+          "match": "\\{\\{\\s*slot\\s*\\}\\}",
+          "name": "keyword.other.slot.pphx entity.name.variable.slot.pphx"
+        }
+      ]
+    },
+    "component-tag": {
+      "patterns": [
+        {
+          "begin": "(</?)([A-Z][A-Za-z0-9_.]*)",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.tag.begin.pphx" },
+            "2": { "name": "entity.name.type.class.component.pphx support.class.component.pphx" }
+          },
+          "end": "(/?>(?!>))",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.tag.end.pphx" }
+          },
+          "name": "meta.tag.component.pphx",
+          "patterns": [
+            {
+              "include": "#island-directive"
+            },
+            {
+              "include": "#php-tag"
+            },
+            {
+              "include": "text.html.basic#attribute"
+            }
+          ]
+        }
+      ]
+    },
     "php-tag": {
       "patterns": [
         {
@@ -69,6 +123,27 @@
             }
           },
           "name": "meta.embedded.block.php",
+          "contentName": "source.php",
+          "patterns": [
+            {
+              "include": "source.php"
+            }
+          ]
+        },
+        {
+          "begin": "\\{(=)?(?=\\s*\\$)",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.begin.php"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.end.php"
+            }
+          },
+          "name": "meta.embedded.expression.pphx",
           "contentName": "source.php",
           "patterns": [
             {

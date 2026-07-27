@@ -5,6 +5,20 @@ All notable changes to the PPHLX Visual Studio Code extension will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-07-27
+
+### Added
+- **Instant Tokenized `@import` Highlighting**: Tokenized `@import Component from 'path'` directive grammar so `@import` keywords highlight immediately on the very first typed character.
+- **Custom Component Tag Highlighting (`<Layout>`, `<Head/>`)**: Mapped capitalized custom component tags (`<Layout>`, `<Head/>`, `<FeedbackCard/>`) to `entity.name.type.class` TextMate scopes for standard component-driven token coloring.
+- **Self-Closing Tag Slash (`/>`) Punctuation Fix**: Mapped self-closing component tag slash `/` to `punctuation.definition.tag.end.pphx`, resolving red error highlights on `<Head/>` tags.
+- **Recursive Component Definition Provider**: `Ctrl+Click` / `F12` "Go to Definition" recursively traverses `@import` component trees (e.g. `Page` ➔ `Layout` ➔ `Head`).
+- **Component Hover Previews**: Hovering over `<Head/>` or `<Layout>` renders interactive Markdown preview tooltips with source path links.
+- **Expression Interpolation Highlighting (`{$var}`)**: Added syntax grammar rules for single-brace PHP expression interpolations (e.g. `{$imageUrl}`, `{$badgeText}`, `{$initialStars}`), highlighting outer braces in punctuation scopes and inner PHP variables in yellow/cyan.
+- **Island Hydration Directive Highlighting**: Added keyword token highlighting for island directives (`client:load`, `client:visible`, `client:idle`, `client:only`).
+- **Slot Placeholder Highlighting**: Added distinct syntax token scopes for `{{slot}}` template placeholders.
+
+---
+
 ## [1.0.9] - 2026-07-25
 
 ### Added
