@@ -5,6 +5,14 @@ All notable changes to the PPHLX Visual Studio Code extension will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-07-27
+
+### Added
+- **VS Code for Web (`vscode.dev`) Platform Support**: Declared `"browser": "./extension.js"` and `"extensionKind": ["ui", "workspace", "web"]`, enabling native installation across both VS Code Desktop and VS Code Web environments.
+- **Self-Contained PHP TextMate Grammar**: Bundled standalone PHP TextMate grammar (`syntaxes/php.tmLanguage.json`) and removed external `vscode.php` dependency, providing complete PHP syntax highlighting across all Web and Desktop platforms.
+
+---
+
 ## [1.1.0] - 2026-07-27
 
 ### Added

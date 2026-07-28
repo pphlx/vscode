@@ -2,7 +2,7 @@
   "name": "pphlx",
   "displayName": "PPHLX",
   "description": "Rich editing experience for PPHLX templates, bringing syntax highlighting, component autocomplete, and language support.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publisher": "pphlx",
   "author": "PPHLX",
   "license": "MIT",
@@ -19,11 +19,13 @@
     "vscode": "^1.60.0"
   },
   "main": "./extension.js",
+  "browser": "./extension.js",
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
   "activationEvents": [
     "onLanguage:pphx"
-  ],
-  "extensionDependencies": [
-    "vscode.php"
   ],
   "categories": [
     "Programming Languages"
@@ -72,6 +74,11 @@
         "language": "pphx",
         "scopeName": "text.html.pphx",
         "path": "./syntaxes/pphlx.tmLanguage.json"
+      },
+      {
+        "language": "php",
+        "scopeName": "source.php",
+        "path": "./syntaxes/php.tmLanguage.json"
       },
       {
         "language": "pphlxignore",
