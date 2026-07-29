@@ -5,6 +5,14 @@ All notable changes to the PPHLX Visual Studio Code extension will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-07-28
+
+### Added
+- **Unresolved Component Token Diagnostic Engine (`UnresolvedComponentToken`)**: Automatically scans `.pphx` templates for custom component tags (e.g. `<Head />`, `<Card />`) used without a matching top-level `@import` statement and flags them with real-time red wavy diagnostic errors.
+- **Auto-Import Quick Fix Action (`Ctrl+.`)**: Added 1-click VS Code Code Action for unresolved component diagnostics, allowing developers to press `Ctrl+.` on any un-imported component tag to instantly insert `@import Component from "../components/Component.pphx";` at the top of the file.
+
+---
+
 ## [1.1.1] - 2026-07-27
 
 ### Added

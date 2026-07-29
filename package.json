@@ -2,7 +2,7 @@
   "name": "pphlx",
   "displayName": "PPHLX",
   "description": "Rich editing experience for PPHLX templates, bringing syntax highlighting, component autocomplete, and language support.",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "publisher": "pphlx",
   "author": "PPHLX",
   "license": "MIT",
@@ -79,10 +79,6 @@
         "language": "php",
         "scopeName": "source.php",
         "path": "./syntaxes/php.tmLanguage.json"
-      },
-      {
-        "language": "pphlxignore",
-        "scopeName": "source.ignore"
       }
     ]
   }
