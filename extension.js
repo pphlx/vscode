@@ -69,6 +69,53 @@ function findComponentDefinition(document, compName, visited = new Set()) {
 }
 
 /**
+ * Resolves the relative path to an existing or expected component file
+ */
+function getCandidateRelativePath(document, compName) {
+	const currentDir = path.dirname(document.fileName);
+	const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+
+	if (workspaceFolder) {
+		const wsRoot = workspaceFolder.uri.fsPath;
+		const potentialPaths = [
+			path.join(currentDir, `${compName}.pphx`),
+			path.join(currentDir, 'components', `${compName}.pphx`),
+			path.join(wsRoot, 'src', 'components', `${compName}.pphx`),
+			path.join(wsRoot, 'components', `${compName}.pphx`),
+			path.join(wsRoot, 'src', `${compName}.pphx`)
+		];
+		for (const p of potentialPaths) {
+			if (fs.existsSync(p)) {
+				let rel = path.relative(currentDir, p).replace(/\\/g, '/');
+				if (!rel.startsWith('.')) {
+					rel = './' + rel;
+				}
+				return rel;
+			}
+		}
+	}
+
+	return `../components/${compName}.pphx`;
+}
+
+/**
+ * Determines the line position where a new @import should be inserted
+ */
+function getImportInsertionPosition(document) {
+	const text = document.getText();
+	const lines = text.split(/\r?\n/);
+	let insertLine = 0;
+	for (let i = 0; i < lines.length; i++) {
+		if (lines[i].trim().startsWith('@import')) {
+			insertLine = i + 1;
+		} else if (lines[i].trim() !== '' && insertLine > 0) {
+			break;
+		}
+	}
+	return new vscode.Position(insertLine, 0);
+}
+
+/**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
@@ -153,7 +200,7 @@ function activate(context) {
 		})
 	);
 
-	// 4. Auto-Completion Provider for Imported Components
+	// 4. Auto-Completion Provider for Components (Imported & Workspace Auto-Import)
 	context.subscriptions.push(
 		vscode.languages.registerCompletionItemProvider({ language: 'pphx' }, {
 			provideCompletionItems(document, position) {
@@ -165,16 +212,57 @@ function activate(context) {
 				const text = document.getText();
 				const importRegex = /@import\s+([A-Za-z0-9_]+)\s+from\s+['"]([^'"]+)['"]/g;
 				const completions = [];
+				const importedComponents = new Set();
 				let match;
 
 				while ((match = importRegex.exec(text)) !== null) {
 					const compName = match[1];
 					const compPath = match[2];
+					importedComponents.add(compName);
 
 					const item = new vscode.CompletionItem(compName, vscode.CompletionItemKind.Class);
 					item.detail = `PPHLX Component from ${compPath}`;
 					item.insertText = new vscode.SnippetString(`${compName} />$0`);
 					completions.push(item);
+				}
+
+				// Find unimported components in workspace to provide auto-import completions
+				const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+				if (workspaceFolder) {
+					const candidateDirs = [
+						path.join(workspaceFolder.uri.fsPath, 'src', 'components'),
+						path.join(workspaceFolder.uri.fsPath, 'components'),
+						path.join(path.dirname(document.fileName), 'components')
+					];
+					for (const dir of candidateDirs) {
+						if (fs.existsSync(dir)) {
+							try {
+								const files = fs.readdirSync(dir);
+								for (const file of files) {
+									if (file.endsWith('.pphx')) {
+										const compName = path.basename(file, '.pphx');
+										if (!importedComponents.has(compName)) {
+											importedComponents.add(compName);
+											const fullPath = path.join(dir, file);
+											let relPath = path.relative(path.dirname(document.fileName), fullPath).replace(/\\/g, '/');
+											if (!relPath.startsWith('.')) {
+												relPath = './' + relPath;
+											}
+
+											const item = new vscode.CompletionItem(compName, vscode.CompletionItemKind.Class);
+											item.detail = `Auto-import from ${relPath}`;
+											item.insertText = new vscode.SnippetString(`${compName} />$0`);
+											const insertPos = getImportInsertionPosition(document);
+											item.additionalTextEdits = [
+												vscode.TextEdit.insert(insertPos, `@import ${compName} from "${relPath}"\n`)
+											];
+											completions.push(item);
+										}
+									}
+								}
+							} catch (e) {}
+						}
+					}
 				}
 
 				return completions;
@@ -183,7 +271,26 @@ function activate(context) {
 		})
 	);
 
-	// 5. Unresolved Component Token Diagnostic Engine & Auto-Import Quick Fix Action
+	// 5. Snippet / Directive Completion for @import
+	context.subscriptions.push(
+		vscode.languages.registerCompletionItemProvider({ language: 'pphx' }, {
+			provideCompletionItems(document, position) {
+				const line = document.lineAt(position).text;
+				const linePrefix = line.substring(0, position.character);
+				if (linePrefix.trimStart().startsWith('@') || linePrefix.trimStart().startsWith('imp')) {
+					const item = new vscode.CompletionItem('@import', vscode.CompletionItemKind.Snippet);
+					item.detail = 'PPHLX Component Import Directive';
+					item.insertText = new vscode.SnippetString('@import ${1:Component} from "${2:../components/${1:Component}.pphx}"\n');
+					item.documentation = new vscode.MarkdownString('Import a PPHLX component without a trailing semicolon.');
+					return [item];
+				}
+				return undefined;
+			},
+			triggerCharacters: ['@', 'i']
+		})
+	);
+
+	// 6. Unresolved Component Token Diagnostic Engine & Auto-Import Quick Fix Action
 	const diagnosticCollection = vscode.languages.createDiagnosticCollection('pphlx');
 	context.subscriptions.push(diagnosticCollection);
 
@@ -245,10 +352,7 @@ function activate(context) {
 						const match = diagnostic.message.match(/Component <([A-Za-z0-9_]+) \/>/);
 						if (match) {
 							const compName = match[1];
-
-							// Try to locate candidate component file in workspace src/ or components/
-							const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
-							let candidateRelPath = `../components/${compName}.pphx`;
+							const candidateRelPath = getCandidateRelativePath(document, compName);
 
 							const action = new vscode.CodeAction(
 								`Add '@import ${compName} from "${candidateRelPath}"'`,
@@ -258,8 +362,9 @@ function activate(context) {
 							action.diagnostics = [diagnostic];
 
 							const edit = new vscode.WorkspaceEdit();
-							const importLine = `@import ${compName} from "${candidateRelPath}";\n`;
-							edit.insert(document.uri, new vscode.Position(0, 0), importLine);
+							const importLine = `@import ${compName} from "${candidateRelPath}"\n`;
+							const insertPos = getImportInsertionPosition(document);
+							edit.insert(document.uri, insertPos, importLine);
 							action.edit = edit;
 
 							actions.push(action);
