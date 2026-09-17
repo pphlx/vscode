@@ -45,4 +45,4 @@ jobs:
           VSCE_PAT: ${{ secrets.VSCE_TOKEN }}
 
       - name: Publish to Open VSX Registry
-        run: npx ovsx publish pphlx.vsix -p ${{ secrets.OVSX_TOKEN }}
+        run: npx ovsx publish pphlx.vsix
